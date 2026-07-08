@@ -90,19 +90,6 @@ streamlit run app.py
 You can also skip the `.env` file entirely and paste your API key straight into the
 sidebar text box when the app opens — it's only kept in memory for that session, not saved.
 
-## Why this differs from the original Colab notebook
-
-The notebook used `while True: input(...)` loops for conversations, which only work
-in a blocking, single-user script — they can't run in a web UI. This version instead:
-
-- Keeps conversation history in `st.session_state`, and each user message triggers
-  **one** agent turn (Streamlit reruns the whole script per interaction — this is the
-  standard pattern for chat UIs in Streamlit).
-- Splits monolithic notebook cells into a proper `src/` package so agents, routing,
-  and utilities can be tested and reused independently of the UI.
-- Replaces `IPython.display.Markdown` with `st.markdown` / `st.chat_message`.
-- Adds a sidebar API-key input and a "Download transcript" button so no local file
-  access is required to use the outputs.
 
 ## Notes & possible next steps
 
