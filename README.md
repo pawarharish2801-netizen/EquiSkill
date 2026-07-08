@@ -11,12 +11,11 @@ free tool rather than a paid bootcamp or mentorship program.
 
 | Mode | What it does |
 |---|---|
-| 🧭 Smart Assistant | Auto-detects what you need and routes you to the right agent |
-| 📘 Tutorial Generator | Writes a GenAI tutorial with code, using live web search for up-to-date info |
+| 📘 Tutorial Generator | Writes a GenAI tutorial with code, using live Tavily web search for up-to-date info |
 | 💬 Ask a GenAI Question | Open Q&A chat with an "expert GenAI engineer" persona |
-| 📝 Interview Question Prep | Curated interview questions with references |
-| 🎤 Mock Interview | Simulated back-and-forth interview with feedback |
-| 📄 Resume Builder | Step-by-step conversational resume builder |
+| 📝 Interview Question Prep | Curated interview questions with web-sourced references |
+| 🎤 Mock Interview | Upload your resume — AI interviews you based on your actual experience |
+| 📄 Resume Builder | Conversational builder that generates a professional LaTeX resume for Overleaf |
 | 🔍 Job Search | One-shot search + clean Markdown summary of listings |
 
 ## Project structure
@@ -134,9 +133,7 @@ sidebar text box when the app opens — it's only kept in memory for that sessio
   `404 ... is not found for API version` error again in the future, Google has likely
   shut down these models too — check https://ai.google.dev/gemini-api/docs/models
   for the current stable model names and update `src/config.py`.
-- `DuckDuckGoSearchResults` is a free, keyless search tool but can occasionally
-  rate-limit; consider swapping in a paid search API (e.g. Tavily, SerpAPI) if you
-  hit reliability issues at hackathon-demo time.
+- The web search uses **Tavily Search API** (1000 free requests/month). Get a key at https://tavily.com and set `TAVILY_API_KEY` in your `.env` file.
 - For a stronger SDG 4 pitch: consider adding a lightweight outcome metric (e.g. a
   self-rated "readiness score" before/after a session) and/or a regional-language
   toggle to widen access.
@@ -147,15 +144,15 @@ To take this application to production and support thousand of concurrent users,
 
 ```mermaid
 graph TD
-    Client[Client / Web Browser] -->|HTTP| Frontend[React / Next.js UI<br/>(Currently Streamlit)]
-    Frontend -->|REST API Request| API_Gateway[API Gateway / Load Balancer]
-    API_Gateway --> Backend[Python FastAPI<br/>Microservice]
-    
-    Backend -->|SQL| Database[(Cloud SQL / RDS<br/>(MySQL/PostgreSQL))]
-    Backend -->|API Call| Gemini[Google Gemini API]
-    Backend -->|API Call| Tavily[Tavily Search API]
-    Backend -.->|Message Queue| Worker[Async Celery Worker<br/>(PDF Generation / Long tasks)]
-    
+    Client["Client / Web Browser"] -->|HTTP| Frontend["React or Next.js UI - Currently Streamlit"]
+    Frontend -->|REST API Request| API_Gateway["API Gateway / Load Balancer"]
+    API_Gateway --> Backend["Python FastAPI Microservice"]
+
+    Backend -->|SQL| Database[("Cloud SQL / RDS - MySQL or PostgreSQL")]
+    Backend -->|API Call| Gemini["Google Gemini API"]
+    Backend -->|API Call| Tavily["Tavily Search API"]
+    Backend -.->|Message Queue| Worker["Async Celery Worker - PDF Generation"]
+
     subgraph Enterprise Infrastructure
       API_Gateway
       Backend
