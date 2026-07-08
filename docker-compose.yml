@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+
+  # ── MySQL Database ──────────────────────────────────────────────────────────
+  mysql-db:
+    image: mysql:8.0
+    container_name: equiskill-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: equiskill
+      MYSQL_USER: equiskill
+      MYSQL_PASSWORD: equiskill
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "equiskill", "-pequiskill"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── FastAPI Backend ─────────────────────────────────────────────────────────
+  equiskill-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: equiskill-backend
+    restart: unless-stopped
+    env_file: .env                    # reads GOOGLE_API_KEY and TAVILY_API_KEY
+    environment:
+      DATABASE_URL: mysql+pymysql://equiskill:equiskill@mysql-db:3306/equiskill
+    ports:
+      - "8000:8000"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+
+  # ── Streamlit Frontend ──────────────────────────────────────────────────────
+  equiskill-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: equiskill-frontend
+    restart: unless-stopped
+    environment:
+      BACKEND_URL: http://equiskill-backend:8000
+    ports:
+      - "8501:8501"
+    depends_on:
+      - equiskill-backend
+
+volumes:
+  mysql_data:

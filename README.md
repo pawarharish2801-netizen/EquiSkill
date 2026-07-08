@@ -23,16 +23,47 @@ free tool rather than a paid bootcamp or mentorship program.
 
 ```
 equiskill/
-├── app.py                # Streamlit UI — entry point
-├── requirements.txt
-├── .env.example           # copy to .env and add your key
-├── src/
-│   ├── config.py          # Gemini LLM setup (cached)
-│   ├── agents.py          # LearningResourceAgent, InterviewAgent, ResumeMaker, JobSearch
-│   ├── router.py          # query categorization for Smart Assistant mode
-│   └── utils.py           # markdown saving, conversation trimming
-└── EquiSkill_output/       # generated tutorials/resumes/etc land here (auto-created)
+├── app.py                   # Original monolithic Streamlit app (for local dev)
+├── app_frontend.py          # ★ Decoupled Streamlit frontend (calls FastAPI via REST)
+├── backend_main.py          # ★ FastAPI REST backend (LangChain / Gemini logic lives here)
+├── docker-compose.yml       # ★ Orchestrates MySQL + Backend + Frontend
+├── Dockerfile.backend       # ★ FastAPI image (multi-stage)
+├── Dockerfile.frontend      # ★ Streamlit image (lightweight)
+├── requirements.txt             # Full (local dev)
+├── requirements-backend.txt     # Backend only
+├── requirements-frontend.txt    # Frontend only
+├── .env.example             # copy to .env and add your keys
+└── src/
+    ├── config.py            # Gemini FallbackLLM setup (auto-rotates 5 models)
+    ├── agents.py            # LearningResourceAgent, InterviewAgent, ResumeMaker, JobSearch
+    ├── database.py          # ★ SQLAlchemy models (ChatSession, GeneratedResume) + MySQL
+    ├── latex_resume.py      # LaTeX resume generator (Jake's Resume template)
+    └── utils.py             # File parsing, chat trimming
 ```
+
+★ = added in enterprise architecture upgrade
+
+## Docker Quickstart (Enterprise Mode)
+
+**Prerequisites:** [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+
+```bash
+# 1. Clone and configure
+git clone https://github.com/pawarharish2801-netizen/EquiSkill.git
+cd EquiSkill
+cp .env.example .env
+# Edit .env — set GOOGLE_API_KEY and TAVILY_API_KEY
+
+# 2. Launch everything with one command
+docker-compose up --build -d
+
+# 3. Open the app
+# Streamlit UI → http://localhost:8501
+# FastAPI docs  → http://localhost:8000/docs   (interactive API explorer!)
+```
+
+To stop: `docker-compose down` (add `-v` to also delete the database volume).
+
 
 ## Setup
 
@@ -109,3 +140,26 @@ sidebar text box when the app opens — it's only kept in memory for that sessio
 - For a stronger SDG 4 pitch: consider adding a lightweight outcome metric (e.g. a
   self-rated "readiness score" before/after a session) and/or a regional-language
   toggle to widen access.
+
+## Enterprise Architecture (Future State)
+
+To take this application to production and support thousand of concurrent users, the monolithic script structure would be decoupled into a microservice architecture.
+
+```mermaid
+graph TD
+    Client[Client / Web Browser] -->|HTTP| Frontend[React / Next.js UI<br/>(Currently Streamlit)]
+    Frontend -->|REST API Request| API_Gateway[API Gateway / Load Balancer]
+    API_Gateway --> Backend[Python FastAPI<br/>Microservice]
+    
+    Backend -->|SQL| Database[(Cloud SQL / RDS<br/>(MySQL/PostgreSQL))]
+    Backend -->|API Call| Gemini[Google Gemini API]
+    Backend -->|API Call| Tavily[Tavily Search API]
+    Backend -.->|Message Queue| Worker[Async Celery Worker<br/>(PDF Generation / Long tasks)]
+    
+    subgraph Enterprise Infrastructure
+      API_Gateway
+      Backend
+      Database
+      Worker
+    end
+```
