@@ -5,7 +5,10 @@ the FallbackLLM transparently retries with the next model in the chain.
 """
 import os
 import logging
-import streamlit as st
+try:
+    import streamlit as st
+except ModuleNotFoundError:
+    st = None  # type: ignore[assignment]  # running outside Streamlit (e.g. FastAPI / CI)
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 
