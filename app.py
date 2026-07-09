@@ -127,8 +127,8 @@ if mode == "mock_interview":
         st.stop()
     else:
         with st.expander("📄 Loaded resume (click to view)", expanded=False):
-            st.text(st.session_state["mock_resume_text"][:1500] + "..." 
-                    if len(st.session_state["mock_resume_text"]) > 1500 
+            st.text(st.session_state["mock_resume_text"][:1500] + "..."
+                    if len(st.session_state["mock_resume_text"]) > 1500
                     else st.session_state["mock_resume_text"])
         if st.button("🔄 Change resume", use_container_width=False):
             del st.session_state["mock_resume_text"]

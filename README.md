@@ -1,5 +1,7 @@
 # EquiSkill — GenAI Career Assistant
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A free, open-source, multi-agent Streamlit app that helps people learn Generative AI,
 prepare for interviews, build a resume, and find jobs — powered by Gemini + LangChain.
 
@@ -17,6 +19,29 @@ free tool rather than a paid bootcamp or mentorship program.
 | 🎤 Mock Interview | Upload your resume — AI interviews you based on your actual experience |
 | 📄 Resume Builder | Conversational builder that generates a professional LaTeX resume for Overleaf |
 | 🔍 Job Search | One-shot search + clean Markdown summary of listings |
+
+## Screenshots & Demo
+
+> **Tip for judges:** Clone the repo and run `docker-compose up --build -d` — the full stack (UI + API + DB) is up in one command.
+
+### Home
+![Home](docs/screenshots/Home.png)
+
+### Modes in Action
+
+| Tutorial Generator | Ask a GenAI Question |
+|---|---|
+| ![Tutorial Generator](docs/screenshots/Tutorial%20Generator.png) | ![Ask a GenAI Question](docs/screenshots/Ask%20a%20GenAI%20Question.png) |
+
+| Interview Question Prep | Mock Interview |
+|---|---|
+| ![Interview Question Prep](docs/screenshots/Interview%20Question%20Prep.png) | ![Mock Interview](docs/screenshots/Mock%20Interview.png) |
+
+| Resume Builder | Job Search |
+|---|---|
+| ![Resume Builder](docs/screenshots/Resume%20Builder-1.png) | ![Job Search](docs/screenshots/job%20search%20.png) |
+
+> 📄 Resume Builder also exports a LaTeX PDF via Overleaf — see [`Resume Builder- Latex.png`](docs/screenshots/Resume%20Builder-%20Latex.png)
 
 ## Project structure
 
@@ -123,20 +148,23 @@ sidebar text box when the app opens — it's only kept in memory for that sessio
 
 ## Notes & possible next steps
 
-- `langchain-google-genai==2.0.4` currently pulls in the deprecated
-  `google.generativeai` SDK (you'll see a `FutureWarning` on startup) — it still
-  works, but a future upgrade to `google-genai` + a newer `langchain-google-genai`
-  (4.x on PyPI as of mid-2026) would remove the warning. Not done here by default
-  since it's a major-version jump that could change other behavior.
-- The app uses `gemini-2.5-flash` and `gemini-2.5-pro` (the original notebook used
-  `gemini-1.5-flash`/`gemini-1.5-pro`, which Google fully retired). If you see a
-  `404 ... is not found for API version` error again in the future, Google has likely
-  shut down these models too — check https://ai.google.dev/gemini-api/docs/models
-  for the current stable model names and update `src/config.py`.
-- The web search uses **Tavily Search API** (1000 free requests/month). Get a key at https://tavily.com and set `TAVILY_API_KEY` in your `.env` file.
-- For a stronger SDG 4 pitch: consider adding a lightweight outcome metric (e.g. a
-  self-rated "readiness score" before/after a session) and/or a regional-language
-  toggle to widen access.
+- **Model fallback chain** — `src/config.py` runs a 5-model auto-rotating `FallbackLLM`.
+  When any model hits its free-tier rate limit (429 / ResourceExhausted), the app
+  transparently retries with the next model in the chain, so the user rarely sees an
+  error. The current chains are:
+  - *Pro chain* (content generation): `gemini-2.5-flash` → `gemini-3-flash` → `gemini-3.5-flash` → `gemini-2.5-flash-lite` → `gemini-3.1-flash-lite`
+  - *Flash chain* (routing/categorization): same models, highest-RPD first
+  If Google retires one of these models you'll get a `404` — remove it from
+  `PRO_MODELS` / `FLASH_MODELS` in `src/config.py` and add the current stable name
+  from https://ai.google.dev/gemini-api/docs/models.
+- **SDK deprecation warning** — `langchain-google-genai==2.0.4` still depends on the
+  deprecated `google.generativeai` SDK (you'll see a `FutureWarning` on startup).
+  Upgrading to `langchain-google-genai` 4.x + `google-genai` would remove it, but
+  that's a major-version jump that could change other behavior.
+- **Web search** — uses **Tavily Search API** (1 000 free requests/month). Get a key
+  at https://tavily.com and set `TAVILY_API_KEY` in your `.env` file.
+- **SDG 4 stretch goal**: add a lightweight "readiness score" (self-rated before/after
+  a session) and/or a regional-language toggle to widen access.
 
 ## Enterprise Architecture (Future State)
 

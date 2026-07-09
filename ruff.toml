@@ -1,0 +1,6 @@
+[lint]
+select = ["E", "F", "W"]
+ignore = [
+    "E501",   # line too long — handled by formatter
+    "E402",   # module-level import not at top — needed after load_dotenv() in backend_main.py
+]

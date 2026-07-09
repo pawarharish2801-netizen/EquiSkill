@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ── 1. Lint & Import Check ────────────────────────────────────────────────
+  lint:
+    name: Lint & Syntax Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install linting tools
+        run: pip install ruff
+
+      - name: Run Ruff (linter)
+        run: ruff check . --select E,F,W --ignore E501
+
+      - name: Check imports compile cleanly
+        env:
+          GOOGLE_API_KEY: "dummy-key-for-ci"
+          TAVILY_API_KEY: "dummy-key-for-ci"
+          DATABASE_URL: "sqlite:///./ci_test.db"  # Use SQLite in CI — no MySQL needed
+        run: |
+          pip install -r requirements-backend.txt
+          python -c "from src.agents import LearningResourceAgent, InterviewAgent, ResumeMaker, JobSearch; print('agents OK')"
+          python -c "from src.database import Base, ChatSession, GeneratedResume; print('database OK')"
+          python -c "from src.latex_resume import generate_resume_latex, get_overleaf_url; print('latex_resume OK')"
+          python -c "from src.config import get_flash_llm, get_pro_llm; print('config OK')"
+          python -c "import backend_main; print('backend_main OK')"
+
+  # ── 2. Docker Build Check ─────────────────────────────────────────────────
+  docker-build:
+    name: Docker Build Check
+    runs-on: ubuntu-latest
+    needs: lint
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build backend image
+        run: docker build -f Dockerfile.backend -t equiskill-backend:ci .
+
+      - name: Build frontend image
+        run: docker build -f Dockerfile.frontend -t equiskill-frontend:ci .
+
+      - name: Validate docker-compose config
+        run: docker compose config --quiet
