@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
 
   # ── MySQL Database ──────────────────────────────────────────────────────────
@@ -17,7 +15,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "equiskill", "-pequiskill"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "equiskill", "-pequiskill" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -29,7 +27,7 @@ services:
       dockerfile: Dockerfile.backend
     container_name: equiskill-backend
     restart: unless-stopped
-    env_file: .env                    # reads GOOGLE_API_KEY and TAVILY_API_KEY
+    env_file: .env # reads GOOGLE_API_KEY and TAVILY_API_KEY
     environment:
       DATABASE_URL: mysql+pymysql://equiskill:equiskill@mysql-db:3306/equiskill
     ports:

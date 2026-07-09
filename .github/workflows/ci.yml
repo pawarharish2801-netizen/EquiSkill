@@ -54,5 +54,8 @@ jobs:
       - name: Build frontend image
         run: docker build -f Dockerfile.frontend -t equiskill-frontend:ci .
 
+      - name: Create .env for compose validation
+        run: cp .env.example .env
+
       - name: Validate docker-compose config
         run: docker compose config --quiet
