@@ -24,7 +24,7 @@ jobs:
         run: pip install ruff
 
       - name: Run Ruff (linter)
-        run: ruff check . --select E,F,W --ignore E501
+        run: ruff check .
 
       - name: Check imports compile cleanly
         env:

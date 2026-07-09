@@ -9,11 +9,9 @@ import os
 import subprocess
 import tempfile
 import shutil
-import base64
 import urllib.parse
 import logging
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.messages import SystemMessage, HumanMessage
 
 logger = logging.getLogger(__name__)
 
@@ -106,7 +104,7 @@ LATEX_TEMPLATE = r"""
 # Prompt that asks the LLM to fill the LaTeX template
 # ---------------------------------------------------------------------------
 
-FILL_TEMPLATE_PROMPT = r"""You are an expert LaTeX resume writer. Based on the conversation history below, 
+FILL_TEMPLATE_PROMPT = r"""You are an expert LaTeX resume writer. Based on the conversation history below,
 generate a COMPLETE, FILLED LaTeX resume using ONLY the template sections provided.
 
 IMPORTANT RULES:
@@ -121,7 +119,7 @@ Here are the section formats to use:
 HEADER (replace with actual info):
 \begin{{center}}
     \textbf{{\Huge \scshape FULL NAME}} \\ \vspace{{1pt}}
-    \small PHONE $|$ \href{{mailto:EMAIL}}{{\underline{{EMAIL}}}} $|$ 
+    \small PHONE $|$ \href{{mailto:EMAIL}}{{\underline{{EMAIL}}}} $|$
     \href{{LINKEDIN}}{{\underline{{LinkedIn}}}} $|$
     \href{{GITHUB}}{{\underline{{GitHub}}}} $|$
     LOCATION
@@ -207,7 +205,7 @@ def generate_resume_latex(llm, chat_history) -> str:
 def compile_latex_to_pdf(latex_code: str) -> tuple[bytes | None, str]:
     """
     Compile LaTeX to PDF using pdflatex.
-    
+
     Returns:
         (pdf_bytes, tex_path) — pdf_bytes is None if compilation failed.
     """

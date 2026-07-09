@@ -10,8 +10,8 @@ Search is done manually (not via tool-calling agents) to avoid
 thought_signature compatibility issues with newer Gemini models.
 """
 import os
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.messages import HumanMessage, SystemMessage
 
 from src.utils import trim_conversation
 
