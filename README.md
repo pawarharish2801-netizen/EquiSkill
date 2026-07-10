@@ -10,7 +10,8 @@ All project documentation for the internship submission is in the [`/docs`](docs
 |---|---|
 | 📋 Concept Note | [Concept Note.pdf](docs/Concept%20Note.pdf) |
 | 📊 Pitch Deck (PPT) | [EquiSkill_pitch_deck.pptx](docs/EquiSkill_pitch_deck.pptx) |
-| 🗂️ Lean Canvas | [equiskill_lean_canvas.pdf](docs/equiskill_lean_canvas.pdf) |
+| � Pitch Deck (PDF) | [EquiSkill_pitch_deck.pdf](docs/EquiSkill_pitch_deck.pdf) |
+| �🗂️ Lean Canvas | [equiskill_lean_canvas.pdf](docs/equiskill_lean_canvas.pdf) |
 
 ---
 
