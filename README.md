@@ -2,6 +2,18 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+## 📁 Documentation
+
+All project documentation for the internship submission is in the [`/docs`](docs/) folder:
+
+| Document | File |
+|---|---|
+| 📋 Concept Note | [Concept Note.pdf](docs/Concept%20Note.pdf) |
+| 📊 Pitch Deck (PPT) | [EquiSkill_pitch_deck.pptx](docs/EquiSkill_pitch_deck.pptx) |
+| 🗂️ Lean Canvas | [equiskill_lean_canvas.pdf](docs/equiskill_lean_canvas.pdf) |
+
+---
+
 A free, open-source, multi-agent Streamlit app that helps people learn Generative AI,
 prepare for interviews, build a resume, and find jobs — powered by Gemini + LangChain.
 
@@ -165,18 +177,6 @@ sidebar text box when the app opens — it's only kept in memory for that sessio
   at https://tavily.com and set `TAVILY_API_KEY` in your `.env` file.
 - **SDG 4 stretch goal**: add a lightweight "readiness score" (self-rated before/after
   a session) and/or a regional-language toggle to widen access.
-
-## Documentation
-
-All project documentation for the internship submission is located in the [`/docs`](docs/) folder:
-
-| File | Description |
-|---|---|
-| [`presentation.html`](docs/presentation.html) | Investor/demo-day pitch deck (13 slides, open in browser) |
-
-> Open any `.html` file directly in your browser — no server required.
-
----
 
 ## Enterprise Architecture (Future State)
 
