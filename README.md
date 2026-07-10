@@ -166,6 +166,18 @@ sidebar text box when the app opens — it's only kept in memory for that sessio
 - **SDG 4 stretch goal**: add a lightweight "readiness score" (self-rated before/after
   a session) and/or a regional-language toggle to widen access.
 
+## Documentation
+
+All project documentation for the internship submission is located in the [`/docs`](docs/) folder:
+
+| File | Description |
+|---|---|
+| [`presentation.html`](docs/presentation.html) | Investor/demo-day pitch deck (13 slides, open in browser) |
+
+> Open any `.html` file directly in your browser — no server required.
+
+---
+
 ## Enterprise Architecture (Future State)
 
 To take this application to production and support thousand of concurrent users, the monolithic script structure would be decoupled into a microservice architecture.
